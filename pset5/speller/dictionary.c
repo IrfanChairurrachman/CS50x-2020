@@ -29,7 +29,18 @@ bool check(const char *word)
 unsigned int hash(const char *word)
 {
     // TODO
-    return 0;
+    uint32_t hash = 0;
+    while (*s)
+    {
+        hash = (hash << 2) ^ (*s | 0x20);
+        s++;
+    }
+
+    // return a value between 0 and 65535
+    return (int)((hash >> 16) ^ (hash & 0xffff));
+
+    // from curiouskiwi at CS50 Discord
+    // https://discord.com/channels/393846237255696385/395685061678071808/766046453750956052
 }
 
 // Loads dictionary into memory, returning true if successful else false
