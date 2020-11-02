@@ -10,14 +10,19 @@ database = sys.argv[1] if len(sys.argv) == 3 else DB
 
 with open(database, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
-    for row in reader:
-        m = list(row.keys())
-        strs = []
-        for dic in m[1:]:
-            strs.append(dic)
+    rows = [dict(row) for row in reader]
 
+for row in rows:
+    m = list(row.keys())
+    # print(row)
+    strs = []
+    for dic in m[1:]:
+        # print(dic)
+        strs.append(dic)
+    break
+# print(rows)
 strdict = dict.fromkeys(strs)
-
+# print(strs)
 text = sys.argv[2] if len(sys.argv) == 3 else sys.argv[1]
 
 txt_file = open(text, "r")
@@ -28,8 +33,8 @@ if not txt_file:
     sys.exit(1)
 
 read_txt = txt_file.read()
-print(type(read_txt))
-print(read_txt)
+# print(type(read_txt))
+# print(read_txt)
 
 def findstr(txt, strs):
     i = txt.find(strs) + len(strs)
@@ -40,11 +45,36 @@ def findstr(txt, strs):
     
 for key in strs:
     m = read_txt.find(key)
+    x = 0
     strdict[key] = []
     while True:
         if m == -1:
             break
-        y = findstr(read_txt[m:], key)
+        y = findstr(read_txt[x:], key)
         strdict[key].append(y)
-        m = read_txt[m + len(key)].find(key)
+        x = x + len(key) + m
+        m = read_txt[x:].find(key)
 print(strdict)
+
+# check = False
+# for row in rows:
+#     # print(row)
+#     for dna in strdict.items():
+#         # print(row[dna[0]], end=' ')
+#         # print(dna[1])
+#         value = 0 if not dna[1] else max(dna[1])
+#         if int(row[dna[0]]) == value:
+#             check = True
+#         else:
+#             check = False
+#             break
+#     if check == True:
+#         print(row['name'])
+#         break
+
+# if check == False:
+#     print("No match")
+
+for dna in strdict.items():
+    value = 0 if not dna[1] else max(dna[1])
+    print(value)
