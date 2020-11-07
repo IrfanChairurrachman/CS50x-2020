@@ -1,0 +1,1 @@
+select count(*) as 'total' from ratings where rating = 10.0;
