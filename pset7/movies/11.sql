@@ -6,4 +6,5 @@ on people.id = stars.person_id
 join ratings
 on ratings.movie_id = movies.id
 where people.name = 'Chadwick Boseman'
-order by ratings.rating desc;
+order by ratings.rating desc
+limit 5;
