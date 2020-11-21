@@ -2,6 +2,8 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  vertical-align: middle;
+  border-style: none;
 }
 
 .rotate {
@@ -32,4 +34,14 @@ img {
   display: inline-block;
   vertical-align: middle;
   overflow: hidden;
+}
+
+ul{
+  padding-left: 0;
+  list-style-type: none;
+  list-style-image: initial;
+  list-style-position: initial;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  display: block;
 }
