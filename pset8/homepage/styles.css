@@ -20,3 +20,16 @@ img {
 .padding-top{
   padding-top: 1cm;
 }
+
+.padding-left{
+  padding-left: 60px;
+}
+
+.avatar{
+  position: fixed;
+  width: 42px;
+  height: 42px;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+}
