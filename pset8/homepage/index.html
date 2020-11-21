@@ -2,6 +2,7 @@
 
 <html lang="en">
     <head>
+        <link rel="icon" href="images/hydrogen.png">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
         <link href="styles.css" rel="stylesheet">
         <title>Hydrogen</title>
@@ -25,12 +26,28 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="prevelance.html">Prevelance</a>
-              </li>
+            </li>
           </ul>
         </div>
       </nav>
       <br>
       <div class="container padding-top">
+        <table style="width:60px; height:20px;">
+          <tr>
+            <td style="background-color: aqua;" 
+            onmouseover="ChangeBg(this.style.backgroundColor)"
+            onmouseout="ChangeBg('transparent')">
+            </td>
+            <td style="background-color: darkgrey;"
+            onmouseover="ChangeBg(this.style.backgroundColor)"
+            onmouseout="ChangeBg('transparent')">
+            </td>
+            <td style="background-color: lightskyblue;"
+            onmouseover="ChangeBg(this.style.backgroundColor)"
+            onmouseout="ChangeBg('transparent')">
+            </td>
+          </tr>
+        </table>
         <h1>Overview of Hydrogen</h1>
         <img src="images/hydrogen.png" class="img-fluid rotate" alt="Hydrogen">
         <br>
@@ -91,6 +108,12 @@
           </div>
         </div>
       </div>
+      <script>
+        function ChangeBg(color)
+        {
+          document.body.style.background = color;
+        }
+      </script>
     </body>
     <footer class="text-muted">
       <div class="container">

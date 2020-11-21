@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/hydrogen.png">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
     <title>Hydrogen</title>
@@ -32,6 +33,22 @@
     </nav>
     <br>
     <div class="container padding-top">
+      <table style="width:60px; height:20px;">
+        <tr>
+          <td style="background-color: aqua;" 
+          onmouseover="ChangeBg(this.style.backgroundColor)"
+          onmouseout="ChangeBg('transparent')">
+          </td>
+          <td style="background-color: darkgrey;"
+          onmouseover="ChangeBg(this.style.backgroundColor)"
+          onmouseout="ChangeBg('transparent')">
+          </td>
+          <td style="background-color: lightskyblue;"
+          onmouseover="ChangeBg(this.style.backgroundColor)"
+          onmouseout="ChangeBg('transparent')">
+          </td>
+        </tr>
+      </table>
       <h1>Properties of Hydrogen</h1>
       <br>
       <div class="card text-center">
@@ -123,5 +140,16 @@
         </div>
       </div>
     </div>
+    <script>
+      function ChangeBg(color)
+      {
+        document.body.style.background = color;
+      }
+    </script>
 </body>
+<footer class="text-muted">
+  <div class="container">
+    <p>by Irfan Chairurrachman</p>
+  </div>
+</footer>
 </html>
