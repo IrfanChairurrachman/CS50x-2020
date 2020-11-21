@@ -2,12 +2,16 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  vertical-align: middle;
+  padding: 0;
   border-style: none;
 }
 
 .rotate {
-  animation: rotation 2s infinite linear;
+  animation-name: rotation;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: reverse;
 }
 
 @keyframes rotation {
@@ -20,7 +24,11 @@ img {
 }
 
 .padding-top{
-  padding-top: 1cm;
+  padding-top: 3rem;
+  padding-bottom: 2rem;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 0;
 }
 
 .padding-left{
@@ -28,7 +36,7 @@ img {
 }
 
 .avatar{
-  position: fixed;
+  position: absolute;
   width: 42px;
   height: 42px;
   display: inline-block;
