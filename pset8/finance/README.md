@@ -1,3 +1,5 @@
+# README
+
 `export FLASK_APP=application.py`
 
 `export API_KEY=value (your api key)`
