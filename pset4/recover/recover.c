@@ -7,8 +7,6 @@
 typedef uint8_t BYTE;
 #define READ 512
 
-
-
 int main(int argc, char *argv[])
 {
     // check if there's argv[2]
