@@ -121,8 +121,31 @@ def register():
     """Register user"""
     if request.method == "GET":
         return render_template("register.html")
-    else:
-        return apology("TODO")
+    elif request.method == "POST":
+        # Check username submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 403)
+        # Check password same with confirmation
+        elif request.form.get("password") != request.form.get("confirmation"):
+            return apology("password and confirmation didn't match", 403)
+        # check username in database if already exists
+        elif db.execute("SELECT * FROM users WHERE username = :username",
+            username=request.form.get("username")):
+            return apology("Username already taken", 403)
+        
+        db.execute("INSERT INTO users(username, hash) VALUES (:username, :hash)",
+            username=request.form.get("username"), hash=generate_password_hash(request.form.get("password")))
+        
+        # insert user in database
+        rows = db.execute("SELECT * FROM users WHERE username = :username",
+            username=request.form.get("username"))
+
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # Redirect user to home page
+        return redirect("/")
+
         
 
 
