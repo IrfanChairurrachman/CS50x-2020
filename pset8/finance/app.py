@@ -56,7 +56,7 @@ def buy():
         
         if lookup(request.form.get("symbol")) == None:
             return apology("Stock didn't found", 403)
-        elif shares < 1:
+        elif shares < 0:
             return apology("Share must be positive integer", 403)
         
         symbol = lookup(request.form.get("symbol"))
@@ -69,7 +69,7 @@ def buy():
         if total_cash < 0:
             return apology("Your cash didn't enough")
         
-        stock = db.execute("SELECT amount FROM portofolio WHERE user_id = :user AND symbol = :symbol",
+        stock = db.execute("SELECT shares FROM portofolio WHERE user_id = :user AND symbol = :symbol",
                           user=session["user_id"], symbol=symbol['symbol'])
 
         if not stock:
@@ -84,6 +84,9 @@ def buy():
         db.execute("UPDATE users SET cash = :cash WHERE id = :user",
                           cash=total_cash, user=session["user_id"])
         
+        db.execute("INSERT INTO history(user_id, symbol, shares, prices) VALUES (:user, :symbol, :shares, :prices)",
+                user=session["user_id"], symbol=symbol['symbol'], shares=shares, prices=(price * shares))
+
         return redirect("/")
         
 
