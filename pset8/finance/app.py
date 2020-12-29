@@ -227,11 +227,11 @@ def register():
 def sell():
     """Sell shares of stock"""
     if request.method == "POST":
-        # # collect relevant informations
-        # amount=int(request.form.get("amount"))
-        # symbol=request.form.get("symbol")
-        # price=lookup(symbol)["price"]
-        # value=round(price*float(amount))
+        # collect relevant informations
+        amount=int(request.form.get("amount"))
+        symbol=request.form.get("symbol")
+        price=lookup(symbol)["price"]
+        value=round(price*float(amount))
 
         # # Update stocks table
         # amount_before = db.execute("SELECT amount FROM stocks WHERE user_id = :user AND symbol = :symbol",
