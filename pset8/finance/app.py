@@ -52,7 +52,43 @@ def index():
 def buy():
     """Buy shares of stock"""
     if request.method == "POST":
-        return apology("TODO")
+        shares = int(request.form.get("shares"))
+        
+        if lookup(request.form.get("symbol")) == None:
+            return apology("Stock didn't found", 403)
+        elif shares < 1:
+            return apology("Share must be positive integer", 403)
+        
+        symbol = lookup(request.form.get("symbol"))
+        price = symbol['price']
+        cash = db.execute("SELECT cash FROM users WHERE id = :user",
+                          user=session["user_id"])[0]['cash']
+        
+        total_cash = cash - (price * shares)
+
+        if total_cash < 0:
+            return apology("Your cash didn't enough")
+        
+        stock = db.execute("SELECT amount FROM portofolio WHERE user_id = :user AND symbol = :symbol",
+                          user=session["user_id"], symbol=symbol['symbol'])
+
+        if not stock:
+            db.execute("INSERT INTO portofolio(user_id, symbol, shares) VALUES (:user, :symbol, :shares)",
+                user=session["user_id"], symbol=symbol['symbol'], shares=shares)
+        else:
+            shares += stock[0]['shares']
+
+            db.execute("UPDATE portofolio SET shares = :shares WHERE user_id = :user AND symbol = :symbol",
+                user=session["user_id"], symbol=symbol['symbol'], shares=shares)
+
+        db.execute("UPDATE users SET cash = :cash WHERE id = :user",
+                          cash=total_cash, user=session["user_id"])
+        
+        return redirect("/")
+        
+
+        
+        # return apology("TODO")
     else:
         return render_template("buy.html")
 
