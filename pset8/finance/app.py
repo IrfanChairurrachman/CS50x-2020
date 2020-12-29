@@ -48,21 +48,21 @@ def index():
                           user=session["user_id"])
     cash = db.execute("SELECT cash FROM users WHERE id = :user",
                           user=session["user_id"])[0]['cash']
-
+    # create list
     stocks = []
     total = cash
-
+    # iterate each stock
     for row in rows:
         stock = lookup(row['symbol'])
         price = round(stock['price'] * row['shares'], 2)
-
+        # add dict to list
         stocks.append({'symbol': row['symbol'],
                         'name': stock['name'],
                         'shares': row['shares'],
                         'price': round(stock['price'], 2),
                         'total': price})
         total += price
-
+    # render
     return render_template("index.html", stocks=stocks, cash=round(cash, 2), total=round(total, 2))
     # return apology("TODO")
 
@@ -118,7 +118,7 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-
+    # get all the history data
     history = db.execute("SELECT * FROM history WHERE user_id = :user",
                             user=session["user_id"])
 
@@ -197,8 +197,10 @@ def quote():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
+    # render to register if via GET
     if request.method == "GET":
         return render_template("register.html")
+    # process data and redirect if via POST
     elif request.method == "POST":
         user = request.form.get("username")
         password = request.form.get("password")
@@ -224,40 +226,38 @@ def register():
         flash("Registered!")
         return redirect("/")
 
-        
-
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock"""
     if request.method == "POST":
-        # collect relevant informations
+        # collect informations
         shares = int(request.form.get("shares"))
         symbol = request.form.get("symbol")
         price = lookup(symbol)["price"]
         value = round(price * shares, 2)
-        # return apology(symbol)
-        # Update stocks table
+        
+        # check shares in portofolio stock
         init_share = db.execute("SELECT shares FROM portofolio WHERE user_id = :user AND symbol = :symbol",
                           symbol=symbol, user=session["user_id"])[0]['shares']
         final_share = init_share - shares
 
-        # delete stock from table if we sold every unit we had
+        # delete all the stock if sell all unit
         if final_share == 0:
             db.execute("DELETE FROM portofolio WHERE user_id = :user AND symbol = :symbol",
                           user=session["user_id"], symbol=symbol)
 
-        # stop the transaction if the user does not have enough stocks
+        # stop the transaction if exceed 
         elif final_share < 0:
             return apology("Exceed stock to sell")
 
-        # otherwise update with new value
+        # update the value
         else:
             db.execute("UPDATE portofolio SET shares = :shares WHERE user_id = :user AND symbol = :symbol",
                           symbol=symbol, user=session["user_id"], shares=final_share)
 
-        # calculate and update user's cash
+        # update user cash
         cash = db.execute("SELECT cash FROM users WHERE id = :user",
                           user=session["user_id"])[0]['cash']
         total = cash + value
@@ -269,11 +269,12 @@ def sell():
         db.execute("INSERT INTO history(user_id, symbol, shares, prices) VALUES (:user, :symbol, :shares, :prices)",
                 user=session["user_id"], symbol=symbol, shares=-shares, prices=price)
         
+        # send success message and redirect
         flash("Sold!")
         return redirect("/")
 
     elif request.method == "GET":
-
+        # get all the own stock
         stocks = db.execute("SELECT symbol, shares FROM portofolio WHERE user_id = :user",
                           user=session["user_id"])
         
