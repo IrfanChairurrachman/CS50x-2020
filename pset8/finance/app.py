@@ -54,12 +54,12 @@ def index():
 
     for row in rows:
         stock = lookup(row['symbol'])
-        price = stock['price'] * row['shares']
+        price = round(stock['price'] * row['shares'], 2)
 
         stocks.append({'symbol': row['symbol'],
                         'name': stock['name'],
                         'shares': row['shares'],
-                        'price': stock['price'],
+                        'price': round(stock['price'], 2),
                         'total': price})
         total += price
 
