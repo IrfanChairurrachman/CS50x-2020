@@ -10,7 +10,7 @@
             <select id="stock" name="symbol" class="form-control">
                 <option selected>Symbol</option>
             {% for stock in stocks %}
-                <option value={{ stock['symbol'] }}> {{ stock['symbol'] }} ({{ stock['shares'] }}) </option>
+                <option value="{{ stock['symbol'] }}"> {{ stock['symbol'] }} ({{ stock['shares'] }}) </option>
             {% endfor %}
             </select>
         </div>

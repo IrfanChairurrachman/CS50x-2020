@@ -228,42 +228,45 @@ def sell():
     """Sell shares of stock"""
     if request.method == "POST":
         # collect relevant informations
-        amount=int(request.form.get("amount"))
-        symbol=request.form.get("symbol")
-        price=lookup(symbol)["price"]
-        value=round(price*float(amount))
+        shares = int(request.form.get("shares"))
+        symbol = request.form.get("symbol")
+        price = lookup(symbol)["price"]
+        value = round(price * shares, 2)
+        # return apology(symbol)
+        # Update stocks table
+        init_share = db.execute("SELECT shares FROM portofolio WHERE user_id = :user AND symbol = :symbol",
+                          symbol=symbol, user=session["user_id"])[0]['shares']
+        final_share = init_share - shares
 
-        # # Update stocks table
-        # amount_before = db.execute("SELECT amount FROM stocks WHERE user_id = :user AND symbol = :symbol",
-        #                   symbol=symbol, user=session["user_id"])[0]['amount']
-        # amount_after = amount_before - amount
+        # delete stock from table if we sold every unit we had
+        if final_share == 0:
+            db.execute("DELETE FROM portofolio WHERE user_id = :user AND symbol = :symbol",
+                          user=session["user_id"], symbol=symbol)
 
-        # # delete stock from table if we sold every unit we had
-        # if amount_after == 0:
-        #     db.execute("DELETE FROM stocks WHERE user_id = :user AND symbol = :symbol",
-        #                   symbol=symbol, user=session["user_id"])
+        # stop the transaction if the user does not have enough stocks
+        elif final_share < 0:
+            return apology("Exceed stock to sell")
 
-        # # stop the transaction if the user does not have enough stocks
-        # elif amount_after < 0:
-        #     return apology("That's more than the stocks you own")
+        # otherwise update with new value
+        else:
+            db.execute("UPDATE portofolio SET shares = :shares WHERE user_id = :user AND symbol = :symbol",
+                          symbol=symbol, user=session["user_id"], shares=final_share)
 
-        # # otherwise update with new value
-        # else:
-        #     db.execute("UPDATE stocks SET amount = :amount WHERE user_id = :user AND symbol = :symbol",
-        #                   symbol=symbol, user=session["user_id"], amount=amount_after)
+        # calculate and update user's cash
+        cash = db.execute("SELECT cash FROM users WHERE id = :user",
+                          user=session["user_id"])[0]['cash']
+        total = cash + value
 
-        # # calculate and update user's cash
-        # cash = db.execute("SELECT cash FROM users WHERE id = :user",
-        #                   user=session["user_id"])[0]['cash']
-        # cash_after = cash + price * float(amount)
+        db.execute("UPDATE users SET cash = :cash WHERE id = :user",
+                          cash=total, user=session["user_id"])
 
-        # db.execute("UPDATE users SET cash = :cash WHERE id = :user",
-        #                   cash=cash_after, user=session["user_id"])
+        # Update history table
+        db.execute("INSERT INTO history(user_id, symbol, shares, prices) VALUES (:user, :symbol, :shares, :prices)",
+                user=session["user_id"], symbol=symbol, shares=-shares, prices=value)
+        
+        flash("Sold!")
+        return redirect("/")
 
-        # # Update history table
-        # db.execute("INSERT INTO transactions(user_id, symbol, amount, value) VALUES (:user, :symbol, :amount, :value)",
-        #         user=session["user_id"], symbol=symbol, amount=-amount, value=value)
-        return apology("TODO")
     elif request.method == "GET":
 
         stocks = db.execute("SELECT symbol, shares FROM portofolio WHERE user_id = :user",
