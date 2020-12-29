@@ -157,7 +157,7 @@ def quote():
         stock = lookup(request.form.get("symbol"))
         # check if stock exists
         if not stock:
-            return apology("Stock not exist")
+            return apology("Stock didn't found")
         # return 
         return render_template("quoted.html", stock=stock)
     # User click via GET
