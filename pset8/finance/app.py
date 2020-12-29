@@ -88,10 +88,6 @@ def buy():
                 user=session["user_id"], symbol=symbol['symbol'], shares=shares, prices=(price * shares))
 
         return redirect("/")
-        
-
-        
-        # return apology("TODO")
     else:
         return render_template("buy.html")
 
