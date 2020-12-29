@@ -96,16 +96,16 @@ def buy():
             db.execute("INSERT INTO portofolio(user_id, symbol, shares) VALUES (:user, :symbol, :shares)",
                 user=session["user_id"], symbol=symbol['symbol'], shares=shares)
         else:
-            shares += stock[0]['shares']
+            # shares += stock[0]['shares']
 
             db.execute("UPDATE portofolio SET shares = :shares WHERE user_id = :user AND symbol = :symbol",
-                user=session["user_id"], symbol=symbol['symbol'], shares=shares)
+                user=session["user_id"], symbol=symbol['symbol'], shares=shares + stock[0]['shares'])
 
         db.execute("UPDATE users SET cash = :cash WHERE id = :user",
                           cash=total_cash, user=session["user_id"])
         
         db.execute("INSERT INTO history(user_id, symbol, shares, prices) VALUES (:user, :symbol, :shares, :prices)",
-                user=session["user_id"], symbol=symbol['symbol'], shares=shares, prices=(price * shares))
+                user=session["user_id"], symbol=symbol['symbol'], shares=shares, prices=price)
 
         flash("Bought!")
         return redirect("/")
@@ -118,7 +118,12 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+
+    history = db.execute("SELECT * FROM history WHERE user_id = :user",
+                            user=session["user_id"])
+
+    return render_template("history.html", history=history)
+    # return apology("TODO")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -262,7 +267,7 @@ def sell():
 
         # Update history table
         db.execute("INSERT INTO history(user_id, symbol, shares, prices) VALUES (:user, :symbol, :shares, :prices)",
-                user=session["user_id"], symbol=symbol, shares=-shares, prices=value)
+                user=session["user_id"], symbol=symbol, shares=-shares, prices=price)
         
         flash("Sold!")
         return redirect("/")
