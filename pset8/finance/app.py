@@ -44,7 +44,27 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    rows = db.execute("SELECT symbol, shares FROM portofolio WHERE user_id = :user",
+                          user=session["user_id"])
+    cash = db.execute("SELECT cash FROM users WHERE id = :user",
+                          user=session["user_id"])[0]['cash']
+
+    stocks = []
+    total = cash
+
+    for row in rows:
+        stock = lookup(row['symbol'])
+        price = stock['price'] * row['shares']
+
+        stocks.append({'symbol': row['symbol'],
+                        'name': stock['name'],
+                        'shares': row['shares'],
+                        'price': stock['price'],
+                        'total': price})
+        total += price
+
+    return render_template("index.html", stocks=stocks, cash=round(cash, 2), total=round(total, 2))
+    # return apology("TODO")
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -87,7 +107,9 @@ def buy():
         db.execute("INSERT INTO history(user_id, symbol, shares, prices) VALUES (:user, :symbol, :shares, :prices)",
                 user=session["user_id"], symbol=symbol['symbol'], shares=shares, prices=(price * shares))
 
+        flash("Bought!")
         return redirect("/")
+
     else:
         return render_template("buy.html")
 
@@ -194,6 +216,7 @@ def register():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
+        flash("Registered!")
         return redirect("/")
 
         
@@ -203,7 +226,50 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        # # collect relevant informations
+        # amount=int(request.form.get("amount"))
+        # symbol=request.form.get("symbol")
+        # price=lookup(symbol)["price"]
+        # value=round(price*float(amount))
+
+        # # Update stocks table
+        # amount_before = db.execute("SELECT amount FROM stocks WHERE user_id = :user AND symbol = :symbol",
+        #                   symbol=symbol, user=session["user_id"])[0]['amount']
+        # amount_after = amount_before - amount
+
+        # # delete stock from table if we sold every unit we had
+        # if amount_after == 0:
+        #     db.execute("DELETE FROM stocks WHERE user_id = :user AND symbol = :symbol",
+        #                   symbol=symbol, user=session["user_id"])
+
+        # # stop the transaction if the user does not have enough stocks
+        # elif amount_after < 0:
+        #     return apology("That's more than the stocks you own")
+
+        # # otherwise update with new value
+        # else:
+        #     db.execute("UPDATE stocks SET amount = :amount WHERE user_id = :user AND symbol = :symbol",
+        #                   symbol=symbol, user=session["user_id"], amount=amount_after)
+
+        # # calculate and update user's cash
+        # cash = db.execute("SELECT cash FROM users WHERE id = :user",
+        #                   user=session["user_id"])[0]['cash']
+        # cash_after = cash + price * float(amount)
+
+        # db.execute("UPDATE users SET cash = :cash WHERE id = :user",
+        #                   cash=cash_after, user=session["user_id"])
+
+        # # Update history table
+        # db.execute("INSERT INTO transactions(user_id, symbol, amount, value) VALUES (:user, :symbol, :amount, :value)",
+        #         user=session["user_id"], symbol=symbol, amount=-amount, value=value)
+        return apology("TODO")
+    elif request.method == "GET":
+
+        stocks = db.execute("SELECT symbol, shares FROM portofolio WHERE user_id = :user",
+                          user=session["user_id"])
+        
+        return render_template("sell.html", stocks=stocks)
 
 
 def errorhandler(e):
